@@ -1,0 +1,259 @@
+{% extends "glitter/base.html" %}
+{% block head %}
+<script type="text/javascript" src="/site_media/jscolor/jscolor.js"></script>
+<script type="text/javascript">
+function changeFillType(fillType) {
+  if (fillType == 'solid') {
+    document.getElementById('fillColor').style.display = 'block'
+    document.getElementById('fill_tile').style.display = 'none'
+  }
+  if (fillType == 'glitter') {
+    document.getElementById('fillColor').style.display = 'none'
+    document.getElementById('fill_tile').style.display = 'block'
+  }
+}
+function changeBackgroundType(backgroundType) {
+  if (backgroundType == 'solid') {
+    document.getElementById('backgroundColor').style.display = 'block'
+    document.getElementById('bottomBackgroundColor').style.display = 'none'
+    document.getElementById('topBackgroundLabel').style.display = 'none'
+    document.getElementById('topBackgroundColor').style.marginLeft = '0px'
+  }
+  if (backgroundType == 'gradient') {
+    document.getElementById('backgroundColor').style.display = 'block'
+    document.getElementById('bottomBackgroundColor').style.display = 'block'
+    document.getElementById('topBackgroundLabel').style.display = 'block'
+    document.getElementById('topBackgroundColor').style.marginLeft = '20px'
+  }
+  if (backgroundType == 'transparent') {
+    document.getElementById('backgroundColor').style.display = 'none'
+    document.getElementById('bottomBackgroundColor').style.display = 'none'
+  }
+}
+function glitterFillClick(glitterFill) {
+  for (count = 0; count < document.editGlitterForm.filltile.length; count++) {
+    if (document.editGlitterForm.filltile[count].value == glitterFill) {
+      document.editGlitterForm.filltile[count].checked = true;
+      valueChanged();
+      break;
+    }
+  }
+}
+function chooseFont(fontName) {
+  for (count = 0; count < document.editGlitterForm.fontname.length; count++) {
+    if (document.editGlitterForm.fontname[count].value == fontName) {
+	  document.editGlitterForm.fontname[count].checked = true;
+	  valueChanged();
+	  break;
+    }	
+  }
+}
+function swapGradientColors() {
+  swapColor = document.getElementById('topBackgroundColor').value
+  document.getElementById('topBackgroundColor').color.fromString(document.getElementById('bottomBgColor').value)
+  document.getElementById('bottomBgColor').color.fromString(swapColor)
+  valueChanged()
+}
+function valueChanged() {
+  document.getElementById('previewButton').style.display = 'block'
+  document.getElementById('saveButton').style.display = 'none'
+  document.getElementById('noChangesButton').style.display = 'none'
+  document.getElementById('editstage').value = 'validate'
+}
+function previewGlitter() {
+  showProgressDiv()
+  document.editGlitterForm.submit()	
+}
+function saveGlitter() {
+  document.getElementById('editstage').value='confirm'
+  document.editGlitterForm.submit()
+}
+function cancelGlitter() {
+  if (confirm ('Are you sure you want to cancel?')) {
+    self.document.location='{{ cancelUrl }}'
+  }
+}
+function noChanges() {
+  {# alert("You haven't made any changes yet.  Please make changes before trying to save.") #}
+  self.document.location='{{ cancelUrl }}'
+}
+function pageLoaded() { {# first set the focus to expose the selected font and fill, then set the focus to the text box #}
+  document.getElementById('font-{{ fontName }}').focus()
+  {% ifequal fillType "glitter" %}
+  document.getElementById('fill-{{ fillTile }}').focus()
+  {% endifequal %}
+  document.getElementById('textdiv').focus()
+  
+  {# if the browser window is short in height, then scroll down to expose the Save and Cancel buttons, while still leaving the Edit Glitter tab visible #}
+  if (parseInt(document.documentElement.clientHeight) < 525) {
+    document.documentElement.scrollTop=95
+  }
+}
+</script>
+{% endblock head %}
+{% block bodytag %}
+<body onload="pageLoaded()" style="background-color:#FFB">
+{% endblock bodytag %}
+
+{% block content %}
+<div id="page" style="background-color:#FFB">
+<div id="main">
+
+<form name=editGlitterForm action="/glitter/editglitter/" method="post" onchange="valueChanged()">
+<input id=editstage type=hidden name=editstage value=validate>
+<input type=hidden name=assetid value="{{ assetId }}">
+<input type=hidden name=pageid value="{{ pageId }}">
+<input type=hidden name=cancelurl value="{{ cancelUrl }}">
+
+{# Store the glitter image url, file size, width, and height because they get passed to the publish page #}
+<input type=hidden name=glitterimageurl value="{{ glitterImageUrl }}">
+<input type=hidden name=glitterfilename value="{{ glitterFileName }}">
+<input type=hidden name=filesize value="{{ fileSize }}">
+<input type=hidden name=width value="{{ width }}">
+<input type=hidden name=height value="{{ height }}">
+
+{% if errorStr %}
+<div style="color:red; background-color:yellow; font-size:125%; font-weight:bold; margin-left:8px; margin-bottom:10px; padding:2px;">
+{{ errorStr }}
+</div>
+{% endif %}
+
+<table border=0><tr><td valign=top>
+Your Text:
+<br>
+<textarea rows=3 cols=40 name=text id="textdiv" onkeypress="valueChanged()">{{ text }}</textarea>
+
+<br><br>
+Font:
+<div style="overflow:auto; width:340px; height:200px; background-color:#CCC; margin-bottom:5px;">
+{% for font in glitterFontList %}
+<nobr>
+<input type=radio name=fontname id="font-{{ font }}" value="{{ font }}"{% ifequal fontName font %} checked{% endifequal %}>
+<a href="javascript:void(0)" onclick="chooseFont('{{ font }}')">
+<img src="/site_media/images/font_samples/{{ font }}.gif"></a>
+</nobr>
+<br>
+{% endfor %}
+</div>
+
+Point Size:
+<input name=pointsize size=3 value="{{ pointSize }}" onkeypress="valueChanged()" style="font-size:80%;">
+(Recommended: 40-80)
+
+<br>
+Leave blank room:
+<input type=checkbox name=numBlankLinesAboveText value="1"{% ifequal numBlankLinesAboveText 1 %} checked{% endifequal %}>on top
+<input type=checkbox name=numBlankLinesBelowText value="1"{% ifequal numBlankLinesBelowText 1 %} checked{% endifequal %}>below
+
+<br><br>
+<div style="background-color:#FFF; height:25px; padding:5px; margin-top:8px;">
+<a class="button" id=cancelButton style="display:block; float:left" href="javascript:cancelGlitter()"><span>Cancel</span></a>
+<a class="button" id=previewButton style="display:none; font-weight:bold; float:right" href="javascript:previewGlitter()"><span>PREVIEW</span></a>
+<a class="button" id=saveButton style="display:{% if hasRendered %}block{% else %}none{% endif %}; font-weight:bold; float:right" href="javascript:saveGlitter()"><span>SAVE</span></a>
+
+{% comment %}
+We don't want to write to Amazon S3 when there are no changes and the image is a duplicate of one we already have.  So, the OK
+button will do the same thing as cancel, without prompting the user if they want to cancel.  This will be confusing for people
+clicked Copy, because they may want to copy an image even though they didn't change it (perhaps they plan to change it later),
+and they won't see the image copied and will think that the copy function doesn't work.  But we live with this issue now,
+the main point being we don't want unneeded duplicate images on Amazon.
+{% endcomment %}
+{% if not hasRendered %}
+<a class="button" id=noChangesButton style="font-weight:bold; float:right;" href="javascript:noChanges()"><span>OK</span></a>
+{% endif %}
+</div>
+
+</td><td valign=top>
+
+Your Glitter:
+<br>
+{% if glitterImageUrl %}
+<img src="{{ glitterImageUrl }}">
+{% else %}
+<img src="{{ repoSampleImageUrl }}" width="{{ repoSampleImageWidth }}" height="{{ repoSampleImageHeight }}">
+{% endif %}
+
+<div id="backgroundSection" style="margin-top:10px">
+Background:
+<input type=radio name=bgtype onclick="changeBackgroundType('solid')" value=solid{% ifequal backgroundType "solid" %} checked{% endifequal %}>Solid Color
+<input type=radio name=bgtype onclick="changeBackgroundType('gradient')" value=gradient{% ifequal backgroundType "gradient" %} checked{% endifequal %}>Gradient
+<input type=radio name=bgtype onclick="changeBackgroundType('transparent')" value=transparent{% ifequal backgroundType "transparent" %} checked{% endifequal %}>Transparent
+
+<div id=backgroundColor style="display:{% ifnotequal backgroundType "transparent" %}block{% else %}none{% endifnotequal %}; margin-top:7px;">
+<span id="topBackgroundLabel" style="float:left; margin-top:4px; margin-right:4px; display:{% ifequal backgroundType "gradient" %}block{% else %}none{% endifequal %};">Top </span>Background Color:
+<input name=topbgcolor id="topBackgroundColor" class="color" value="{{ topBackgroundColor }}" {% ifequal backgroundType "gradient" %}style="margin-left:20px;"{% endifequal %}>
+
+{% ifequal backgroundType "gradient" %}
+<a href="javascript:void(0)" onclick="swapGradientColors()" style="font-size:80%">swap</a>
+{% endifequal %}
+
+<br>
+<div id=bottomBackgroundColor style="display:{% ifequal backgroundType "gradient" %}block{% else %}none{% endifequal %}">
+Bottom Background Color:
+<input name=bottombgcolor id="bottomBgColor" class="color" value="{{ bottomBackgroundColor }}">
+
+<div id="gradient" style="margin-top:5px;">
+Gradient Type:
+<input type=radio name=gradienttype value=vertical{% ifequal gradientType "vertical" %} checked{% endifequal %}>Vertical
+<input type=radio name=gradienttype value=radial{% ifequal gradientType "radial" %} checked{% endifequal %}>Radial
+</div>{# end div gradient #}
+</div>{# end div bottomBackgroundColor #}
+
+</div>{# end div backgroundColor #}
+</div>{# end div backgroundSection #}
+
+<hr>
+
+Stroke Width:
+<input name=strokewidth size=2 value="{{ strokeWidth }}" onkeypress="valueChanged()">
+&nbsp;
+Stroke Color:
+<input name=strokecolor class="color" value="{{ strokeColor }}">
+
+<hr>
+
+<div id="fill_options" style="width:600px; margin-top:10px;">
+Fill Type:
+<input type=radio name=filltype onclick="changeFillType('solid')" value=solid{% ifequal fillType "solid" %} checked{% endifequal %}>Solid Color
+<input type=radio name=filltype onclick="changeFillType('glitter')" value=glitter{% ifequal fillType "glitter" %} checked{% endifequal %}>Glitter
+
+<div id=fillColor style="display:{% ifequal fillType "solid" %}block{% else %}none{% endifequal %}; margin-top:8px;">
+Fill Color:
+<input name=fillcolor class="color" value="{{ fillColor }}">
+</div>
+
+<div id=fill_tile style="display:{% ifequal fillType "glitter" %}block{% else %}none{% endifequal %}; margin-top:8px;">
+Glitter Fill:
+<div id=inner_fill_tile style="padding-top:5px; border: 1px solid #666; background-color:#FFD; overflow:auto; width:615px; height:170px;">
+{% for glitterFill in glitterFillList %}
+<nobr>
+<input type=radio name=filltile id="fill-{{ glitterFill }}" value="{{ glitterFill }}"{% ifequal fillTile glitterFill %} checked{% endifequal %}><a href="javascript:void(0)" onclick="glitterFillClick('{{ glitterFill }}'); return false;"><img src="/site_media/fills/{{ glitterFill }}" border=0></a>
+</nobr>
+{% endfor %}
+</div><!-- id=inner_fill_tile -->
+</div><!-- id=fill_tile -->
+</div><!-- id=fill_options -->
+
+</td></tr></table>
+
+</form>
+
+</div><!-- id=main -->
+</div><!-- id=page -->
+{% endblock content %}
+
+{% block globalnav %}
+<div id="leftmenu"><div id="leftmenu2">
+	<span>Edit Glitter</span>
+</div></div>
+{% endblock globalnav %}
+
+{% block logout %}
+<div id="loginsignup">
+{% if user %}
+<a href="/glitter/logout/">Logout</a>
+{% else %}
+<a href="/">Home</a>
+{% endif %}
+</div>
+{% endblock logout %}

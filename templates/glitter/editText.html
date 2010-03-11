@@ -1,0 +1,31 @@
+
+{% if isNew %}
+<h3>Add Text</h3>
+{% else %}
+<h3>Edit Text</h3>
+{% endif %}
+
+{% if errorCode %}<p><strong>{{ errorCode }}</strong></p>{% endif %}
+
+<form action="/glitter/edittext/" method="post">
+<input type=hidden name=val value=y>
+<input type=hidden name=assetid value={{ assetId }}>
+
+{% if isNew %}
+<input type=hidden name=isnew value=y>
+<input type=hidden name=pageid value={{ pageId }}>
+{% endif %}
+
+<textarea name=text rows=8 cols=60>{{ text }}</textarea>
+
+<br>
+Background color:
+<input name=bgcolor value={{ bgColor }}>
+
+<br>
+{% if isNew %}
+<input type="submit" value="Add Text">
+{% else %}
+<input type="submit" value="Edit Text">
+{% endif %}
+</form>

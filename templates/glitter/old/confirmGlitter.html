@@ -1,0 +1,35 @@
+<h3>Confirm Glitter</h3>
+
+<form name=editGlitterForm action="/funapp/editglitter/" method="post">
+<input id=editstage type=hidden name=editstage value=reedit>
+<input type=hidden name=pageid value="{{ pageId }}">
+<input type=hidden name=assetid value="{{ assetId }}">
+
+<input type=hidden name=glitterimageurl value="{{ glitterImageUrl }}">
+<input type=hidden name=glitterfilename value="{{ glitterFileName }}">
+<input type=hidden name=filesize value="{{ fileSize }}">
+<input type=hidden name=width value="{{ width }}">
+<input type=hidden name=height value="{{ height }}">
+
+<input type=hidden name=text value="{{ text }}">
+<input type=hidden name=fontname value="{{ fontName }}">
+<input type=hidden name=pointsize value="{{ pointSize }}">
+<input type=hidden name=bgtype value="{{ backgroundType }}">
+<input type=hidden name=topbgcolor value="{{ topBackgroundColor }}">
+<input type=hidden name=bottombgcolor value="{{ bottomBackgroundColor }}">
+<input type=hidden name=gradienttype value="{{ gradientType }}">
+<input type=hidden name=filltype value="{{ fillType }}">
+<input type=hidden name=fillcolor value="{{ fillColor }}">
+<input type=hidden name=filltile value="{{ fillTile }}">
+<input type=hidden name=strokecolor value="{{ strokeColor }}">
+<input type=hidden name=strokewidth value="{{ strokeWidth }}">
+
+<img src="{{ glitterImageUrl }}">
+
+<br><br>
+Please confirm that you are done editing this glitter image.
+
+<br><br>
+<input type=submit value="Continue Editing">
+<input type=submit value="Finish" onclick="document.getElementById('editstage').value='confirm'">
+</form>

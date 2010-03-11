@@ -1,0 +1,32 @@
+{% extends "glitter/base.html" %}
+{% block content %}
+<div id="page">
+<div id="main">
+
+<h1>Glitter Detail</h1>
+
+{% if wasGlitterSaved %}
+<p class="error_text">Your glitter has been saved!</p>
+{% endif %}
+
+<img src="{{ glitterAsset.getUrl }}" width="{{ glitterAsset.getWidth }}" height="{{ glitterAsset.getHeight }}">
+
+<div style="padding-bottom:20px">
+<a class="button" href="/glitter/editglitter/?assetid={{ glitterAsset.getAssetId }}&cancelurl=/glitter/myglitterdetail/{{ glitterAsset.getAssetId }}/"><span>Edit</span></a>
+<a class="button" id=copyDiv href="/glitter/editglitter/?clonedassetid={{ glitterAsset.getAssetId }}&cancelurl=/glitter/myglitterdetail/{{ glitterAsset.getAssetId }}/"><span>Copy</span></a>
+<a class="button" id=saveDiv href="/glitter/repopublish/?assetid={{ glitterAsset.getAssetId }}&cancelurl=/glitter/myglitterdetail/{{ glitterAsset.getAssetId }}/"><span>Add To Public Repository</span></a>
+<a class="button" style="font-weight:bold" href="/glitter/myglitter/"><span>View All My Glitter</span></a>
+</div>
+
+<br><br>
+URL:
+<input onclick="this.select()" value="{{ glitterAsset.getUrl }}" size=50>
+
+<br><br>
+Embed Code:
+<input onclick="this.select()" size=42 value='<a href="http://www.glittercreate.com"><img src="{{ glitterAsset.getUrl }}" width="{{ glitterAsset.getWidth }}" height="{{ glitterAsset.getHeight }}" border="0" alt="GlitterCreate.com"></a>'>
+
+</div><!-- id=main -->
+</div><!-- id=page -->
+{% endblock content %}
+

@@ -1,0 +1,32 @@
+{% extends "glitter/base.html" %}
+{% block head %}
+<script type="text/javascript">
+function cancel() {
+  self.document.location='{{ cancelUrl }}'
+}
+</script>
+{% endblock head %}
+
+{% block content %}
+<div id="page">
+<div id="main">
+
+<form name=addToRepoForm action="/glitter/repopublish/" method="post" onsubmit="showProgressDiv()">
+<input type=hidden name=assetid value="{{ assetId }}">
+<input type=hidden name=val value=y>
+
+<h1>Add this asset to the repository?</h1>
+
+{% if imageUrl %}
+<img src="{{ imageUrl }}" width="{{ width }}" height="{{ height }}">
+{% endif %}
+
+<br><br>
+<input type=submit value="Add">
+<input type=button value="Cancel" onclick="cancel()">
+</form>
+
+</div><!-- id=main -->
+</div><!-- id=page -->
+{% endblock content %}
+

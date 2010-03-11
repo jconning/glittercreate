@@ -1,0 +1,111 @@
+{% extends "glitter/base.html" %}
+{% block head %}
+<script type="text/javascript">
+function trim(stringToTrim) {
+	return stringToTrim.replace(/^\s+|\s+$/g,"");
+}
+function submitRepoAssetId(repoAssetId) {
+  {# We validate that the text is not empty (or all whitespace) on the choose glitter landing page, to get the user flow right.  We dont validate it on the regular choose glitter page because if there are people who want to make blank glitters for some reason (maybe for gradients, etc), they can. #}
+  if (trim(document.glitterForm.text.value) == "") {
+    alert ("Please enter your glitter text.")
+    return
+  }
+  showProgressDiv()
+  document.getElementById('repoAssetId').value=repoAssetId
+  document.glitterForm.submit()
+}
+function previousPage() {
+  document.glitterForm.action = '/choose/'
+  document.glitterForm.pi.value = {{ previousIndex }}
+  document.glitterForm.submit()
+}
+function nextPage() {
+  document.glitterForm.action = '/choose/'
+  document.glitterForm.pi.value = {{ nextIndex }}
+  document.glitterForm.submit()
+}
+</script>
+{% endblock head %}
+
+{% block content %}	
+<div id="page">
+<div id="textwork">
+
+<form name=glitterForm action="/glitter/editglitter/" method="POST">
+<input id=repoAssetId type=hidden name=repoassetid value="0">
+<input type=hidden name=dest value="chooseglitter">
+<input type=hidden name=pi value="">
+
+<h1>Step 1: Enter your glitter text</h1>
+
+<textarea name=text rows=3 cols=40>{{ text }}</textarea>
+
+<h1>Step 2: Choose a glitter style</h1>
+
+</div><!-- id=textwork -->
+
+<div id="gallery">
+	
+{% ifnotequal previousIndex -1 %}
+<a class="previous" href="javascript:previousPage()">&lt;&lt; Previous</a>
+{% else %}
+<span class="previousdisabled">&lt;&lt; Previous</span>
+{% endifnotequal %}
+{% ifnotequal nextIndex -1 %}
+<a class="next" href="javascript:nextPage()">Next &gt;&gt;</a>
+{% else %}
+<span class="nextdisabled">Next &gt;&gt;</span>
+{% endifnotequal %}
+<div class="cleaner" style="margin-bottom:5px"></div>
+
+{% for repoAsset in repoAssets %}
+<div style="float:left">
+<input type=radio name=repoassetid value="{{ repoAsset.id }}" onclick="javascript:submitRepoAssetId({{ repoAsset.id }})">
+<a style="border-bottom:0px" href="javascript:submitRepoAssetId({{ repoAsset.id }})">
+<img src="{{ repoAsset.getImageUrl }}" width="{{ repoAsset.getImageWidth }}" height="{{ repoAsset.getImageHeight }}" border=0>
+</a>
+</div>
+{% endfor %}
+
+<div class="cleaner" style="margin-bottom:30px"></div>
+{% ifnotequal previousIndex -1 %}
+<a class="previous" href="javascript:previousPage()">&lt;&lt; Previous</a>
+{% else %}
+<span class="previousdisabled">&lt;&lt; Previous</span>
+{% endifnotequal %}
+{% ifnotequal nextIndex -1 %}
+<a class="next" href="javascript:nextPage()">Next &gt;&gt;</a>
+{% else %}
+<span class="nextdisabled">Next &gt;&gt;</span>
+{% endifnotequal %}
+
+</form>
+
+</div><!-- id=gallery -->
+</div><!-- id=page -->
+{% endblock content %}
+
+{% block globalnav %}
+<div id="menu"><div id="menu2">
+	<a href="/" class="active">Create Glitter</a>
+{% if user %}
+	<a href="/glitter/myglitter/">My Glitter</a>
+	<a href="/glitter/myrglitter/">Public Repository</a>
+{% else %}
+	<a href="javascript:alert('Please login first to view your glitter.')">My Glitter</a>
+	<a href="javascript:alert('Please login first to view the public repository.')">Public Repository</a>
+{% endif %}
+</div></div>
+{% endblock globalnav %}
+
+{% block logout %}
+<div id="loginsignup">
+{% if user %}
+<a href="/glitter/logout/">Logout</a>
+{% else %}
+<a href="/glitter/login/">Login</a>
+<a href="/glitter/signup/">Signup</a>
+{% endif %}
+</div>
+{% endblock logout %}
+

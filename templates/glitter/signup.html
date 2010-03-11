@@ -1,0 +1,50 @@
+{% extends "glitter/base.html" %}
+{% block content %}
+<div id="page">
+<div id="main">
+	
+<h1>Signup</h1>
+
+{% if error_message %}<p class="error_text">{{ error_message }}</p>{% endif %}
+
+<form action="/glitter/signup/" method="post">
+<input type=hidden name=val value="y">
+<input type=hidden name=postlogin value="{{ postLoginAction }}">
+
+<table>
+<tr>
+	<td>Username:</td>
+	<td><input name=username value="{{username}}"></td>
+</tr>
+<tr>
+	<td>Password:</td>
+	<td><input name=password type=password value="{{password}}"></td>
+</tr>
+<tr>
+	<td>Confirm Password:</td>
+	<td><input name=password2 type=password value="{{password2}}"></td>
+</tr>
+	<td>Email Address:</td>
+	<td><input name=email value="{{email}}"></td>
+</tr>
+<tr>
+	<td><input type="submit" value="Signup"></td>
+	<td></td>
+</tr>
+</table>
+
+</form>
+
+</div><!-- id=main -->
+</div><!-- id=page -->
+{% endblock content %}
+
+{% block globalnav %}
+{% endblock globalnav %}
+
+{% block logout %}
+<div id="loginsignup">
+<a href="/">Home</a>
+<a href="/glitter/login/">Login</a>
+</div>
+{% endblock logout %}

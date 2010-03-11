@@ -1,0 +1,154 @@
+{% extends "glitter/base.html" %}
+{% block head %}
+<script type="text/javascript">
+hasTextChanged = false
+function submitRepoAssetId(repoAssetId) {
+  showProgressDiv()
+  document.getElementById('repoAssetId').value=repoAssetId
+  document.glitterForm.submit()
+}
+function switchToAdvancedGlitterEditor() {
+  if (!hasTextChanged) { {# if the user has not changed the text then we can navigate to the advanced editor without rendering #}
+    document.getElementById('dest').value = 'switchtoadvancededitor'
+  } else {
+    document.getElementById('dest').value = ''
+    showProgressDiv()
+  }
+  document.getElementById('cancelurl').value = '/glitter/glitter/' {# too hard to return user to chooseGlitter page, so cancelling the advanced editor will lost their text and start them at the beginning (but they did elect to cancel so that is why there is a reason for them to lose the text) #}
+  document.glitterForm.submit()
+}
+function previewGlitter() {
+  showProgressDiv()
+  document.glitterForm.submit()
+}
+function saveGlitter() {
+  showProgressDiv()
+  document.getElementById('editstage').value = 'confirm'
+  document.glitterForm.submit()
+}
+function textChanged() {
+  hasTextChanged = true
+  document.getElementById('saveDiv').style.display = 'none'
+  document.getElementById('previewDiv').style.display = 'block'
+}
+function previousPage() {
+  document.getElementById('pi').value = {{ previousIndex }}
+  document.getElementById('dest').value = 'paginate'
+  document.glitterForm.submit()
+}
+function nextPage() {
+  document.getElementById('pi').value = {{ nextIndex }}
+  document.getElementById('dest').value = 'paginate'
+  document.glitterForm.submit()
+}
+</script>
+{% endblock head %}
+
+{% block content %}
+<div id="page">
+<div id="textwork">
+
+<form name=glitterForm action="/glitter/editglitter/" method="POST">
+<input id=repoAssetId type=hidden name=repoassetid value="{{ repoAssetId }}">
+<input id=dest type=hidden name=dest value="chooseglitter">
+<input id=cancelurl type=hidden name=cancelurl value="">
+<input id=editstage type=hidden name=editstage value="">
+<input type=hidden name=filesize value="{{ fileSize }}">
+<input type=hidden name=glitterfilename value="{{ glitterFileName }}">
+<input type=hidden name=width value="{{ width }}">
+<input type=hidden name=height value="{{ height }}">
+<input id="pi" type=hidden name=pi value="{{ pageIndex }}">
+<input type=hidden name=glitterimageurl value="{{ glitterImageUrl }}">
+
+<table><tr><td valign=top>
+
+<h1>Your Text:</h1>
+
+<!-- Here is how the buttons were created:
+http://www.oscaralexander.com/tutorials/how-to-make-sexy-buttons-with-css.html
+-->
+
+<textarea name=text rows=3 cols=40 onkeypress="textChanged()">{{ text }}</textarea>
+
+<div>
+<a class="button" href="javascript:switchToAdvancedGlitterEditor()"><span>Advanced Editor</span></a>
+<a class="button" id=previewDiv style="display:none; font-weight:bold; float:right" href="javascript:previewGlitter()"><span>PREVIEW</span></a>
+<a class="button" id=saveDiv style="display:block; font-weight:bold; float:right" href="javascript:saveGlitter()"><span>SAVE</span></a>
+</div>
+
+</td><td valign=top>
+
+<h1>Your Glitter:</h1>
+
+<img src="{{ glitterImageUrl }}">
+
+</td></tr></table>
+
+<div style="padding-bottom:28px"></div>
+
+</div><!-- id=textwork -->
+
+<div id="gallery">
+
+{% ifnotequal previousIndex -1 %}
+<a class="previous" href="javascript:previousPage()">&lt;&lt; Previous</a>
+{% else %}
+<span class="previousdisabled">&lt;&lt; Previous</span>
+{% endifnotequal %}
+{% ifnotequal nextIndex -1 %}
+<a class="next" href="javascript:nextPage()">Next &gt;&gt;</a>
+{% else %}
+<span class="nextdisabled">Next &gt;&gt;</span>
+{% endifnotequal %}
+<div class="cleaner" style="margin-bottom:5px"></div>
+
+{% for repoAsset in repoAssets %}
+<div style="float:left">
+<input type=radio name=repoassetid value="{{ repoAsset.id }}" onclick="javascript:submitRepoAssetId({{ repoAsset.id }})">
+<a href="javascript:submitRepoAssetId({{ repoAsset.id }})">
+<img src="{{ repoAsset.getImageUrl }}" width="{{ repoAsset.getImageWidth }}" height="{{ repoAsset.getImageHeight }}" border=0>
+</a>
+</div>
+{% endfor %}
+
+<div class="cleaner" style="margin-bottom:30px"></div>
+{% ifnotequal previousIndex -1 %}
+<a class="previous" href="javascript:previousPage()">&lt;&lt; Previous</a>
+{% else %}
+<span class="previousdisabled">&lt;&lt; Previous</span>
+{% endifnotequal %}
+{% ifnotequal nextIndex -1 %}
+<a class="next" href="javascript:nextPage()">Next &gt;&gt;</a>
+{% else %}
+<span class="nextdisabled">Next &gt;&gt;</span>
+{% endifnotequal %}
+
+</form>
+
+</div><!-- id=gallery -->
+</div><!-- id=page -->
+{% endblock content %}
+
+{% block globalnav %}
+<div id="menu"><div id="menu2">
+	<a href="/" class="active">Create Glitter</a>
+{% if user %}
+	<a href="/glitter/myglitter/">My Glitter</a>
+	<a href="/glitter/myrglitter/">Public Repository</a>
+{% else %}
+	<a href="javascript:alert('Please login first to view your glitter.')">My Glitter</a>
+	<a href="javascript:alert('Please login first to view the public repository.')">Public Repository</a>
+{% endif %}
+</div></div>
+{% endblock globalnav %}
+
+{% block logout %}
+<div id="loginsignup">
+{% if user %}
+<a href="/glitter/logout/">Logout</a>
+{% else %}
+<a href="/glitter/login/">Login</a>
+<a href="/glitter/signup/">Signup</a>
+{% endif %}
+</div>
+{% endblock logout %}

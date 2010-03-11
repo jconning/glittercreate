@@ -1,0 +1,28 @@
+{% extends "glitter/base.html" %}
+{% block content %}
+<div id="page">
+<div id="main">
+
+<h1>My Glitter</h1>
+
+{% for glitterAsset in glitterAssets %}
+
+<a style="float:left" href="/glitter/myglitterdetail/{{ glitterAsset.getAssetId }}/">
+<img src="{{ glitterAsset.getUrl }}" width="{{ glitterAsset.getWidth }}" height="{{ glitterAsset.getHeight }}" border=0>
+</a>
+<div class="cleaner"></div>
+
+<div>
+<a class="button" href="/glitter/editglitter/?assetid={{ glitterAsset.getAssetId }}&cancelurl=/glitter/myglitter/"><span>Edit</span></a>
+<a class="button" id=copyDiv href="/glitter/editglitter/?clonedassetid={{ glitterAsset.getAssetId }}&cancelurl=/glitter/myglitter/"><span>Copy</span></a>
+<a class="button" href="/glitter/myglitterdetail/{{ glitterAsset.getAssetId }}/?cancelurl=/glitter/myglitter/"><span>View Detail</span></a>
+</div>
+<div class="cleaner"></div>
+<div style="padding-bottom:20px"></div>
+
+{% endfor %}
+
+</div><!-- id=main -->
+</div><!-- id=page -->
+{% endblock content %}
+

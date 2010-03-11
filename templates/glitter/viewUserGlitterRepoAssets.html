@@ -1,0 +1,60 @@
+{% extends "glitter/base.html" %}
+{% block content %}
+<div id="page">
+<div id="main">
+
+<h1>Here is your glitter in the public repository.</h1>
+
+{% if wasAssetAdded %}
+<p class="error_text">Your glitter has been added to the repository!</p>
+<p style="font-style:italic;">Note that whenever glitter is added to the repository, the standard text "Glitter" is
+displayed rather than the text in your original glitter.</p>
+{% endif %}
+
+<p>
+What does "Total uses" mean?
+Every time somebody creates a glitter using your glitter pattern (on the Create Glitter page), it counts as one use.
+</p>
+
+{% for repoAsset in repoAssets %}
+
+<table><tr><td valign=top>
+
+Total uses:
+<!--
+<br>
+Consumes last 7 days:
+<br>
+Consumes today:
+<br>
+-->
+
+</td><td valign=top>
+
+{{ repoAsset.getConsumeCopyCount }}
+<!--
+<br>
+#
+<br>
+#
+-->
+
+</td><td>
+
+<img src="{{ repoAsset.getImageUrl }}" width="{{ repoAsset.getImageWidth }}" height="{{ repoAsset.getImageHeight }}">
+
+</td></tr></table>
+
+{% endfor %}
+
+</div><!-- id=main -->
+</div><!-- id=page -->
+{% endblock content %}
+
+{% block globalnav %}
+<div id="menu"><div id="menu2">
+	<a href="/">Create Glitter</a>
+	<a href="/glitter/myglitter/">My Glitter</a>
+	<a href="/glitter/myrglitter/" class="active">Public Repository</a>
+</div></div>
+{% endblock globalnav %}

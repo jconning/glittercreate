@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>{% block title %}GlitterCreate -- Create your own glitter text using our gallery of styles{% endblock title %}</title>
+<link rel="stylesheet" href="/site_media/css/screen.css" media="screen,projection" />
+<script src="/site_media/js/site.js" type="text/javascript"></script>
+{% block head %}{% endblock head %}
+</head>
+
+{% block bodytag %}
+<body>
+{% endblock bodytag %}
+
+{% block globalheader %}
+<div id="head">
+	<a href="/"><span id="webName">glittercreate</span><span class="sep">&ndash;</span>
+	<h1 id="webDesc">Glitter Text Generator And Gallery -- Create your own glitter text using our gallery of styles</h1></a>
+</div>
+{% endblock globalheader %}
+
+{% block content %}
+<div id="page">
+<div id="textwork">
+
+<form name=glitterForm action="/glitter/editglitter/" method="POST">
+<input id=repoAssetId type=hidden name=repoassetid value="0">
+<input type=hidden name=dest value="chooseglitter">
+
+<h1>Step 1: Enter your glitter text</h1>
+
+<textarea name=text rows=3 cols=40>{{ text }}</textarea>
+
+<h1>Step 2: Choose a glitter style</h1>
+
+</div><!-- id=textwork -->
+
+<div id="gallery">
+
+{% for repoAsset in repoAssets %}
+<div style="float:left">
+<input type=radio name=repoassetid value="{{ repoAsset.id }}" onclick="javascript:submitRepoAssetId({{ repoAsset.id }})">
+<a style="border-bottom:0px" href="javascript:submitRepoAssetId({{ repoAsset.id }})">
+<img src="{{ repoAsset.getImageUrl }}" width="{{ repoAsset.getImageWidth }}" height="{{ repoAsset.getImageHeight }}" border=0>
+</a>
+</div>
+{% endfor %}
+
+</form>
+
+</div><!-- id=gallery -->
+</div><!-- id=page -->
+{% endblock content %}
+
+{% block globalnav %}
+<div id="menu"><div id="menu2">
+	<a href="/">Create Glitter</a>
+	<a href="/glitter/myglitter/" class="active">My Glitter</a>
+	<a href="/glitter/myrglitter/">Public Repository</a>
+</div></div>
+{% endblock globalnav %}
+
+{% block logout %}
+<div id="loginsignup">
+<a href="/glitter/logout/">Logout</a>
+</div>
+{% endblock logout %}
+
+{% block headeremail %}
+<div id="headeremail">
+Email us at help@glittercreate.com
+</div>
+{% endblock headeremail %}
+
+<div id="progress"></div>
+<div id="progress2"><img src="/site_media/images/working.gif"></div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-15126373-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+</body>
+</html>
