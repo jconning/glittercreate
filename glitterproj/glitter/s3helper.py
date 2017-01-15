@@ -4,8 +4,8 @@ from glitterproj import S3
 
 bucketName = "tribble" # development
 #bucketName = "images.glittercreate.com" # production
-awsAccessKey = "AKIAJBDVX3G6AFAX54KQ"
-awsSecretAccessKey = "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"
+awsAccessKey = "TODO"
+awsSecretAccessKey = "TODO"
 
 def getBucketName():
     return bucketName
